@@ -1,0 +1,65 @@
+﻿@model GroupDetailData
+
+
+<div class="box box-success" id="groupDetail">
+    <div class="box-header with-border">
+        <h5 class="box-title">工作组成员</h5>
+        <div class="box-tools pull-right" >
+            <button type="button" class="btn btn-box-tool" id="btnAddEmployee"><i class="fa fa-user-plus"></i> 添加人员</button>
+            <button type="button" class="btn btn-box-tool" id="btnAddJob"><i class="fa fa-user-plus"></i> 添加职务</button>
+            <button type="button" class="btn btn-box-tool" id="btnAddDepartment"><i class="fa fa-user-plus"></i> 添加部门</button>
+            <button type="button" class="btn btn-box-tool" id="btnRemove"><i class="fa fa-trash"> 移除</i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <table class="table" id="tbGroupMember">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="check-all" /></th>
+                    <th>名称</th>
+                    <th>类型</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.GroupMembers)
+                {
+                    <tr data-id="@item.Id" data-member-id="@item.MemberId" data-member-type="@item.MemeberType.ToString()" data-number="@item.Number" data-name="@item.Name">
+                        <td><input type="checkbox" /></td>
+                        <td>@(item.MemeberType== GroupMemeberType.Employee?string.Format("{0} / {1}",item.Name,item.Number):item.Name)</td>
+                        <td>@item.MemeberType.EnumMetadataDisplay()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+
+<div class="box box-success">
+    <div class="box-header with-border">
+        <h5 class="box-title">工作组具体员工</h5>
+    </div>
+    <div class="box-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>姓名</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Employees)
+                {
+                    <tr>
+                        <td>@item.Number</td>
+                        <td>@item.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+

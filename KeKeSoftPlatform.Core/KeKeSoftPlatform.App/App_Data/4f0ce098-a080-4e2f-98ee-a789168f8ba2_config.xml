@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BridgeConfig xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <GreenLeiJiChenJiang>5.00</GreenLeiJiChenJiang>
+    <GreenChenJiangChaZhi>2.5</GreenChenJiangChaZhi>
+    <GreenChenJiangSuLv>1</GreenChenJiangSuLv>
+    <YellowLeiJiChenJiangShangXian>10</YellowLeiJiChenJiangShangXian>
+    <YellowLeiJiChenJiangXiaXian>5</YellowLeiJiChenJiangXiaXian>
+    <YellowChenJiangChaZhiShangXian>5</YellowChenJiangChaZhiShangXian>
+    <YellowChenJiangChaZhiXiaXian>2.5</YellowChenJiangChaZhiXiaXian>
+    <YellowChenJiangSuLv>1</YellowChenJiangSuLv>
+    <RedLeiJiChenJiang>10</RedLeiJiChenJiang>
+    <RedChenJiangChaZhi>5</RedChenJiangChaZhi>
+    <RedChenJiangSuLv>1</RedChenJiangSuLv>
+    <JieShouYuCuoDianHua_1>14781728318</JieShouYuCuoDianHua_1>
+    <YellowYuJingDianHua_1>18837717193</YellowYuJingDianHua_1>
+    <YellowYuJingDianHua_2>14781728318</YellowYuJingDianHua_2>
+    <RedYuJingDianHua_1>14781728318</RedYuJingDianHua_1>
+</BridgeConfig>

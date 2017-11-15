@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BridgeConfig xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <GreenLeiJiChenJiang>0</GreenLeiJiChenJiang>
+    <GreenChenJiangChaZhi>0</GreenChenJiangChaZhi>
+    <GreenChenJiangSuLv>0</GreenChenJiangSuLv>
+    <YellowLeiJiChenJiangShangXian>0</YellowLeiJiChenJiangShangXian>
+    <YellowLeiJiChenJiangXiaXian>0</YellowLeiJiChenJiangXiaXian>
+    <YellowChenJiangChaZhiShangXian>0</YellowChenJiangChaZhiShangXian>
+    <YellowChenJiangChaZhiXiaXian>0</YellowChenJiangChaZhiXiaXian>
+    <YellowChenJiangSuLv>0</YellowChenJiangSuLv>
+    <RedLeiJiChenJiang>0</RedLeiJiChenJiang>
+    <RedChenJiangChaZhi>0</RedChenJiangChaZhi>
+    <RedChenJiangSuLv>0</RedChenJiangSuLv>
+</BridgeConfig>

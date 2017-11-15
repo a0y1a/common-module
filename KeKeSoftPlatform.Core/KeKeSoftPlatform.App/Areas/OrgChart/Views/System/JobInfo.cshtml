@@ -1,0 +1,81 @@
+﻿@model JobInfoData
+
+<div class="box box-primary">
+    <div class="box-header">
+        <h5 class="box-title">职务信息</h5>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" id="btnEditJob">
+                <i class="fa fa-pencil"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <ul class="list-group list-group-unbordered">
+            <li class="list-group-item">
+                <b>名称</b> <a class="pull-right">@Model.Job.Name</a>
+            </li>
+            <li class="list-group-item">
+                <b>是否为职务工作组</b> <a class="pull-right">
+                    @if (Model.Job.IsGroup)
+                    {
+                        <span class="label label-info">是</span>
+                    }
+                    else
+                    {
+                        <span class="label label-default">否</span>
+                    }
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="box box-success">
+    <div class="box-header with-border">
+        <h5 class="box-title">该职务人员信息</h5>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" id="btnViewEmployee" data-target="#tbJobEmployees">
+                <i class="fa fa-user"></i>
+            </button>            
+            @if (Model.Job.IsGroup)
+            {
+                <button type="button" class="btn btn-box-tool" id="btnAddEmployee">
+                    <i class="fa fa-user-plus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" id="btnRemoveEmployee">
+                    <i class="fa fa-trash"></i>
+                </button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-box-tool" id="btnReplaceEmployee">
+                    <i class="fa fa-retweet"></i>
+                </button>
+            }
+
+
+        </div>
+    </div>
+    <div class="box-body">
+        <table class="table table-hover" id="tbJobEmployees">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="check-all" /></th>
+                    <th>编号</th>
+                    <th>姓名</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Employee)
+                {
+                    <tr data-id="@item.Id">
+                        <td><input type="checkbox" /></td>
+                        <td>@item.Number</td>
+                        <td>@item.Name</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>

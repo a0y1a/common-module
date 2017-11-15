@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BridgeConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <GreenLeiJiChenJiang>1</GreenLeiJiChenJiang>
+    <GreenChenJiangChaZhi>1</GreenChenJiangChaZhi>
+    <GreenChenJiangSuLv>1</GreenChenJiangSuLv>
+    <YellowLeiJiChenJiangShangXian>1</YellowLeiJiChenJiangShangXian>
+    <YellowLeiJiChenJiangXiaXian>1</YellowLeiJiChenJiangXiaXian>
+    <YellowChenJiangChaZhiShangXian>1</YellowChenJiangChaZhiShangXian>
+    <YellowChenJiangChaZhiXiaXian>1</YellowChenJiangChaZhiXiaXian>
+    <YellowChenJiangSuLv>1</YellowChenJiangSuLv>
+    <RedLeiJiChenJiang>1</RedLeiJiChenJiang>
+    <RedChenJiangChaZhi>1</RedChenJiangChaZhi>
+    <RedChenJiangSuLv>1</RedChenJiangSuLv>
+    <JieShouYuCuoDianHua_1>1</JieShouYuCuoDianHua_1>
+    <JieShouYuCuoDianHua_2>1</JieShouYuCuoDianHua_2>
+    <JieShouYuCuoDianHua_3>1</JieShouYuCuoDianHua_3>
+    <JieShouYuCuoDianHua_4>1</JieShouYuCuoDianHua_4>
+    <JieShouYuCuoDianHua_5>1</JieShouYuCuoDianHua_5>
+    <YellowYuJingDianHua_1>1</YellowYuJingDianHua_1>
+    <YellowYuJingDianHua_2>1</YellowYuJingDianHua_2>
+    <YellowYuJingDianHua_3>1</YellowYuJingDianHua_3>
+    <YellowYuJingDianHua_4>1</YellowYuJingDianHua_4>
+    <YellowYuJingDianHua_5>1</YellowYuJingDianHua_5>
+    <RedYuJingDianHua_1>1</RedYuJingDianHua_1>
+</BridgeConfig>

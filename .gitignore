@@ -1,0 +1,23 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/KeKeSoftPlatform.App/bin/*
+/KeKeSoftPlatform.App/obj/*
+/KeKeSoftPlatform.Common/bin/*
+/KeKeSoftPlatform.Common/obj/*
+/KeKeSoftPlatform.Core/bin/*
+/KeKeSoftPlatform.Core/obj/*
+/KeKeSoftPlatform.Db/bin/*
+/KeKeSoftPlatform.Db/obj/*
+/KeKeSoftPlatform.WebExtension/bin/*
+/KeKeSoftPlatform.WebExtension/obj/*
+/packages/*
+/.vs/*
+/KeKeSoftPlatform.App/tmp/*
+*.suo
+/KeKeSoftPlatform.App/upload/Import
+/KeKeSoftPlatform.App/tmp
+/KeKeSoftPlatform.WindowsService/bin/*
+/KeKeSoftPlatform.WindowsService/obj/*
+/KeKeSoftPlatform.App/App_Data

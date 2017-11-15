@@ -1,0 +1,27 @@
+﻿@model T_Employee
+<div class="modal fade " tabindex="-1" role="dialog" aria-hidden="true" >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">员工信息</h4>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group list-group-unbordered">
+                    <li class="list-group-item">
+                        <b>编号</b> <a class="pull-right">@Model.Number</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>姓名</b> <a class="pull-right">@Model.Name</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="btnEditEmployee">
+                    <i class="fa fa-pencil"></i>
+                    编辑
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

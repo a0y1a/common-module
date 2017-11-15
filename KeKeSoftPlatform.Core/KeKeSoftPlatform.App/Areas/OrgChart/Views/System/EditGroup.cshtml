@@ -1,0 +1,18 @@
+﻿@model EditGroupData
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m=>m.Id)
+
+    <div class="form-group">
+        <label for="Name"> @Html.DisplayNameFor(m => m.Name)：<span class="input-required">*</span></label>
+        @Html.EditorFor(m => m.Name)
+        @Html.ValidationMessageFor(m => m.Name)
+    </div>
+
+    <div class="form-group">
+        <label for="Name"> @Html.DisplayNameFor(m => m.Description)：</label>
+        @Html.EditorFor(m => m.Description)
+        @Html.ValidationMessageFor(m => m.Description)
+    </div>
+}

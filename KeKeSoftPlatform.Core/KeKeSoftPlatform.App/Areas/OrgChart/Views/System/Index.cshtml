@@ -1,0 +1,1333 @@
+﻿
+@{
+    ViewBag.Title = "组织结构";
+}
+
+@section head{
+    <link href="@Url.Content("~/Content/zTree/zTreeStyle.css")" rel="stylesheet" />
+}
+
+<div class="row">
+    <div class="col-sm-4">
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-sm-12" id="orgChartTool">
+                        <span class="label label-info" id="orgChartToolTip">组织结构管理</span>
+                        <div class="btn-group hide">
+                            <button type="button" class="btn btn-info btn-sm hide" id="btnAddJob"><i class="fa fa-user-plus"></i> 添加子职务</button>
+                            <button type="button" class="btn btn-info btn-sm hide" id="btnDeleteJob"><i class="fa fa-trash"> 删除职务</i></button>
+                            <button type="button" class="btn btn-info btn-sm hide" id="btnAddDepartment"><i class="fa fa-users"> 添加部门</i></button>
+                            <button type="button" class="btn btn-info btn-sm hide" id="btnDeleteDepartment"><i class="fa fa-trash"></i> 删除部门</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="box-split" style="margin-top:5px;"></div>
+                    <div class="col-sm-12">
+                        <ul id="orgChart" class="ztree"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8" id="orgChartNodeContent">
+
+    </div>
+</div>
+
+
+@section foot{
+    <script src="@Url.Content("~/Scripts/zTree/jquery.ztree.all.min.js")" type="text/javascript"></script>
+    <script src="/Scripts/OrgChart/oc.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var addJobData = {};
+            var orgChart = (function ($) {
+                var oc = {
+                    //加载组织结构基础数据
+                    init: function () {
+                        $.get("/orgchart/system/QueryOrgChart", function (result) {
+                            data = result;
+                            $.fn.zTree.init($("#orgChart"), {
+                                callback: {
+                                    onClick: oc.selectNode
+                                }
+                            }, [result]);
+                        });
+                    },
+
+                    //选中节点事件
+                    selectNode: function (event, treeId, treeNode) {
+                        $("#orgChartToolTip").remove();
+                        $("#orgChartTool>.btn-group").removeClass("hide");
+                        $("#orgChartTool button").addClass("hide");
+                        $("#orgChartNodeContent").empty();
+                        if (treeNode.userData.type === 1) {
+                            //选中部门
+                            $("#btnDeleteDepartment").removeClass("hide");
+                            oc.updateDepartmentInfo(treeNode.userData.id);
+                            return;
+                        } else if (treeNode.userData.type === 2) {
+                            //选中职务
+                            if (!treeNode.userData.isGroup) {
+                                $("#btnAddDepartment").removeClass("hide");
+                                $("#btnAddJob").removeClass("hide");
+                            }
+                            $("#btnDeleteJob").removeClass("hide");
+                            oc.updateJobInfo(treeNode.userData.id);
+                            return;
+                        }
+                    },
+
+                    //添加职务
+                    addJob: function (data) {
+                        data = $.extend({
+                            parentJobId: $.fn.zTree.getZTreeObj("orgChart").getSelectedNodes()[0].userData.id
+                        }, data);
+                        return $.post("/orgchart/system/AddJob", { data: JSON.stringify(data) }, function (result) {
+                            var treeObj = $.fn.zTree.getZTreeObj("orgChart");
+                            treeObj.addNodes(treeObj.getSelectedNodes()[0], result.data);
+                        });
+                    },
+                    //删除选中节点职务
+                    deleteJob: function () {
+                        //获取当前选中节点
+                        var treeObj = $.fn.zTree.getZTreeObj("orgChart");
+                        var node = treeObj.getSelectedNodes()[0];
+                        //如果选中节点的父节点类型是部门，则该节点是部门领导，不允许删除
+                        if (node.getParentNode().userData.type === 1) {
+                            $.toast({
+                                text: "该职务是部门领导，不能删除", // Text that is to be shown in the toast
+                                heading: '提示', // Optional heading to be shown on the toast
+                                icon: 'error', // Type of toast icon
+                                position: 'mid-center'
+                            });
+                            return;
+                        }
+                        else {
+                            $.blockUI();
+                            $.post("/orgchart/system/DeleteJob", { jobId: node.userData.id }, function (result) {
+                                $.unblockUI();
+                                if (result.isSuccess) {
+                                    treeObj.removeNode(node);
+                                    return;
+                                }
+                                else {
+                                    $.toast({
+                                        text: result.error, // Text that is to be shown in the toast
+                                        heading: '提示', // Optional heading to be shown on the toast
+                                        icon: 'error', // Type of toast icon
+                                        position: 'mid-center'
+                                    });
+                                    return;
+                                }
+                            });
+                        }
+                    },
+                    //删除选中的节点部门
+                    deleteDepartment: function () {
+                        //获取当前选中节点
+                        var treeObj = $.fn.zTree.getZTreeObj("orgChart");
+                        var node = treeObj.getSelectedNodes()[0];
+                        //如果选中的节点是根节点，不允许删除
+                        if (!node.getParentNode()) {
+                            $.toast({
+                                text: "不能删除该部门", // Text that is to be shown in the toast
+                                heading: '提示', // Optional heading to be shown on the toast
+                                icon: 'error', // Type of toast icon
+                                position: 'mid-center'
+                            });
+                            return;
+                        }
+                        else {
+                            $.blockUI();
+                            $.post("/orgchart/system/DeleteDepartment", { departmentId: node.userData.id }, function (result) {
+                                $.unblockUI();
+                                if (result.isSuccess) {
+                                    treeObj.removeNode(node);
+                                    return;
+                                }
+                                else {
+                                    $.toast({
+                                        text: result.error, // Text that is to be shown in the toast
+                                        heading: '提示', // Optional heading to be shown on the toast
+                                        icon: 'error', // Type of toast icon
+                                        position: 'mid-center'
+                                    });
+                                    return;
+                                }
+                            });
+                        }
+                    },
+
+                    //显示部门信息
+                    updateDepartmentInfo: function (departmentId) {
+                        $.blockUI();
+                        $.get("/orgchart/system/departmentinfo", { departmentId: departmentId }, function (html) {
+                            $("#orgChartNodeContent").empty().append(html);
+                            $('[data-toggle="popover"]').popover()
+                            $.unblockUI();
+                        });
+                    },
+                    //显示职务信息
+                    updateJobInfo: function (jobId) {
+                        $.blockUI();
+                        $.get("/orgchart/system/JobInfo", { jobId: jobId }, function (html) {
+                            $("#orgChartNodeContent").empty().append(html);
+                            $('[data-toggle="popover"]').popover()
+                            $.unblockUI();
+                        });
+                    },
+                    //添加部门
+                    addDepartment: function (data) {
+                        data = $.extend({
+                            parentJobId: $.fn.zTree.getZTreeObj("orgChart").getSelectedNodes()[0].userData.id
+                        }, data);
+                        return $.post("/orgchart/system/AddDepartment", { data: JSON.stringify(data) }, function (result) {
+                            var treeObj = $.fn.zTree.getZTreeObj("orgChart");
+                            treeObj.addNodes(treeObj.getSelectedNodes()[0], result.data);
+                        });
+                    },
+                    //添加职务人员
+                    addJobEmployee: function (data) {
+                        return $.post("/orgchart/system/addJobEmployee", data, function (result) {
+                            if (result.isSuccess === false) {
+                                $.toast({
+                                    text: result.error, // Text that is to be shown in the toast
+                                    heading: '提示', // Optional heading to be shown on the toast
+                                    icon: 'error', // Type of toast icon
+                                    position: 'mid-center'
+                                });
+                                return;
+                            }
+                            oc.updateJobInfo(data.jobId);
+                        });
+                    }
+                };
+
+                return oc;
+            })(jQuery);
+
+            orgChart.init();
+            //添加子职务
+            $("#orgChartTool").on("click", "#btnAddJob", function () {
+                var jobEnter,
+                    employeeChooseMethod,
+                    employeeEnter,
+                    employeeChooseFromOrgChart,
+                    employeeChooseFromNoneJob,
+                    employeeMultiple,
+                    employeeEnterForMultiple,
+                    employeeChooseMultipleFromOrgChart,
+                    employeeChooseMultipleFromNoneJob;
+
+                var saveData;
+
+                jobEnter = oc.job.enter({
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                if (!component.getOptions().validate.valid()) {
+                                    return;
+                                }
+                                component.persist();
+                                var data = component.result();
+                                saveData = {
+                                    addEmployees: []
+                                };
+                                saveData.jobName = data.jobName;
+                                saveData.isGroup = data.isGroup;
+                                component.getModal().modal("hide");
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    if (data.isGroup) {
+                                        employeeMultiple.init();
+                                    }
+                                    else {
+                                        employeeChooseMethod.init();
+                                    }
+                                });
+                            });
+                        }
+                    }
+                }).result(undefined);
+
+                employeeChooseMethod = oc.employee.chooseMethod({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().modal("hide");
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    jobEnter.init();
+                                });
+                            });
+                            
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    component.persist();
+                                    var data = component.result();
+                                    saveData.addEmployees.push({
+                                        chooseAddUserMethod: data.method
+                                    });
+                                    if (component.result().method === "EnterEmployeeInfo") {
+                                        employeeEnter.init();
+                                    }
+                                    else if (component.result().method === "ChooseFromOrgChart") {
+                                        employeeChooseFromOrgChart.init();
+                                    }
+                                    else {
+                                        employeeChooseFromNoneJob.init();
+                                    }
+                                });
+                                component.getModal().modal("hide");
+                            });
+                            
+                        }
+                    }
+                }).result(undefined);
+
+                employeeEnter = oc.employee.enter({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                console.log("上一步");
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeChooseMethod.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                if (!component.getOptions().validate.valid()) {
+                                    return;
+                                }
+                                component.persist();
+                                var data = component.result();
+                                saveData.addEmployees[0].employeeName = data.employeeName;
+                                saveData.addEmployees[0].employeeNumber = data.employeeNumber;
+                                saveData.addEmployees[0].employeePassword = data.employeePassword;
+
+                                orgChart.addJob(saveData).then(function () {
+                                    component.getModal().modal("hide");
+                                });
+                            });
+                        }
+                    }
+                }).result(undefined);
+
+                employeeChooseFromOrgChart = oc.employee.chooseFromOrgChart({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeChooseMethod.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                if ($("#componentEmployee>tbody>tr.success").length === 0) {
+                                    $.toast({
+                                        text: "至少选择一行", // Text that is to be shown in the toast
+                                        heading: '提示', // Optional heading to be shown on the toast
+                                        icon: 'error', // Type of toast icon
+                                        position: 'mid-center'
+                                    });
+                                    return;
+                                }
+
+                                component.persist();
+                                var data = component.result();
+                                saveData.addEmployees[0].employeeId = data.employeeId;
+                                saveData.addEmployees[0].method = "ChooseFromOrgChart";
+
+                                orgChart.addJob(saveData).then(function () {
+                                    component.getModal().modal("hide");
+                                });
+                            });
+                        }
+                    }
+                }).result(undefined);
+
+                employeeChooseFromNoneJob = oc.employee.chooseFromNoneJob({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeChooseMethod.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                if ($("#componentNoneJob>tbody>tr.success").length === 0) {
+                                    $.toast({
+                                        text: "至少选择一行", // Text that is to be shown in the toast
+                                        heading: '提示', // Optional heading to be shown on the toast
+                                        icon: 'error', // Type of toast icon
+                                        position: 'mid-center'
+                                    });
+                                    return;
+                                }
+                                component.persist();
+                                var data = component.result();
+                                saveData.addEmployees[0].employeeId = data.employeeId;
+                                saveData.addEmployees[0].method = "ChooseFromNoneJob";
+                                orgChart.addJob(saveData).then(function () {
+                                    component.getModal().modal("hide");
+                                });
+                            });
+                        }
+                    }
+                }).result(undefined);
+                
+                employeeMultiple = oc.employee.multiple({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    jobEnter.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        groupName: "选择操作",
+                        buttons: [{
+                            text: "输入员工信息",
+                            init: function (component) {
+                                $(this).click(function () {
+                                    var data = component.result() || [];
+                                    var model = [];
+                                    $(data).each(function () {
+                                        if (this.chooseAddUserMethod === "EnterEmployeeInfo") {
+                                            model.push(this.employeeNumber);
+                                        }
+                                    });
+                                    component.getModal().on("hidden.bs.modal", function () {
+                                        employeeEnterForMultiple.getOptions().userData.employeeNumbers = model;
+                                        employeeEnterForMultiple.result(undefined).init();
+                                    });
+                                    component.getModal().modal("hide");
+                                });
+                            }
+                        },
+                        {
+                            text: "从组织结构选择",
+                            init: function (component) {
+                                $(this).click(function () {
+                                    var data = component.result() || [];
+                                    var model = [];
+                                    $(data).each(function () {
+                                        if (this.chooseAddUserMethod === "ChooseFromOrgChart") {
+                                            model.push({ employeeId: this.employeeId });
+                                        }
+                                    });
+                                    component.getModal().on("hidden.bs.modal", function () {
+                                        employeeChooseMultipleFromOrgChart.result(model,false).init();
+                                    });
+                                    component.getModal().modal("hide");
+                                });
+                            }
+                        },
+                        {
+                            text: "从无职务人员中选择",
+                            init: function (component) {
+                                $(this).click(function () {
+                                    var data = component.result() || [];
+                                    var model = [];
+                                    $(data).each(function () {
+                                        if (this.chooseAddUserMethod === "ChooseFromNoneJob") {
+                                            model.push(this.employeeId);
+                                        }
+                                    });
+                                    component.getModal().on("hidden.bs.modal", function () {
+                                        employeeChooseMultipleFromNoneJob.result(model, false).init();
+                                    });
+                                    component.getModal().modal("hide");
+                                });
+                            }
+                        },
+                        {
+                            text: "已完成",
+                            init: function (component) {
+                                $(this).click(function () {
+                                    if ($("#componentMultipleEmployee>tbody>tr").length === 0) {
+                                        $.toast({
+                                            text: "至少选择一行", // Text that is to be shown in the toast
+                                            heading: '提示', // Optional heading to be shown on the toast
+                                            icon: 'error', // Type of toast icon
+                                            position: 'mid-center'
+                                        });
+                                        return;
+                                    }
+                                    component.persist();
+                                    $(component.result()).each(function () {
+                                        saveData.addEmployees.push({
+                                            employeeId: this.employeeId,
+                                            employeeName: this.employeeName,
+                                            employeeNumber: this.employeeNumber,
+                                            employeePassword: this.employeePassword,
+                                            chooseAddUserMethod: this.chooseAddUserMethod
+                                        });
+                                    });
+                                    orgChart.addJob(saveData).then(function () {
+                                        component.getModal().modal("hide");
+                                    });
+                                });
+                            }
+                        }]
+                    }
+                }).result(undefined);
+
+                employeeEnterForMultiple = oc.employee.enter({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeMultiple.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                if (!component.getOptions().validate.valid()) {
+                                    return;
+                                }
+                                var data = component.persist().result();
+                                var employeeMultipleData = employeeMultiple.result() || [];
+                                employeeMultipleData.push({
+                                    employeeName: data.employeeName,
+                                    employeeNumber: data.employeeNumber,
+                                    employeePassword: data.employeePassword,
+                                    chooseAddUserMethod: "EnterEmployeeInfo"
+                                });
+                                employeeMultiple.result(employeeMultipleData);
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeMultiple.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    }
+                }).result(undefined);
+
+                employeeChooseMultipleFromOrgChart = oc.employee.chooseMultipleFromOrgChart({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeMultiple.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.persist();
+                                var data = component.persist().result();
+                                var employeeMultipleData = employeeMultiple.result() || [];
+                                $(data).each(function () {
+                                    var item = this;
+                                    for (var i = 0; i < employeeMultipleData.length; i++) {
+                                        if (this.employeeId === employeeMultipleData[i].employeeId) {
+                                            return true;
+                                        }
+                                    }
+                                    employeeMultipleData.push({
+                                        employeeId: this.employeeId,
+                                        employeeName: this.employeeName,
+                                        employeeNumber: this.employeeNumber,
+                                        chooseAddUserMethod: "ChooseFromOrgChart"
+                                    });
+                                });
+                                
+                                employeeMultiple.result(employeeMultipleData);
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeMultiple.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    }
+                }).result(undefined);
+
+                employeeChooseMultipleFromNoneJob = oc.employee.chooseMultipleFromNoneJob({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeMultiple.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.persist();
+                                var data = component.persist().result();
+                                var employeeMultipleData = employeeMultiple.result() || [];
+                                $(data).each(function () {
+                                    var item = this;
+                                    for (var i = 0; i < employeeMultipleData.length; i++) {
+                                        if (this.employeeId === employeeMultipleData[i].employeeId) {
+                                            return true;
+                                        }
+                                    }
+                                    employeeMultipleData.push({
+                                        employeeId: this.employeeId,
+                                        employeeName: this.employeeName,
+                                        employeeNumber: this.employeeNumber,
+                                        chooseAddUserMethod: "ChooseFromNoneJob"
+                                    });
+                                });
+
+                                employeeMultiple.result(employeeMultipleData);
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeMultiple.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    }
+                }).result(undefined);
+
+                jobEnter.init();
+                
+            });
+
+            //添加部门
+            $("#orgChartTool").on("click", "#btnAddDepartment", function () {
+                var saveData = {};
+                var departmentEnter,
+                    jobEnter,
+                    employeeChooseMethod,
+                    employeeEnter,
+                    employeeChooseFromOrgChart,
+                    employeeChooseFromNoneJob;
+                departmentEnter = oc.department.enter({
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                if (!component.getOptions().validate.valid()) {
+                                    return;
+                                }
+                                component.persist();
+                                var data = component.result();
+                                saveData.departmentName = data.departmentName;
+                                component.getModal().modal("hide");
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    jobEnter.init();
+                                });
+                            });
+                        }
+                    }
+                }).result(undefined);
+
+                jobEnter = oc.job.enter({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                departmentEnter.init();
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                if (!component.getOptions().validate.valid()) {
+                                    return;
+                                }
+                                component.persist();
+                                var data = component.result();
+                                saveData.jobName = data.jobName;
+                                saveData.isGroup = data.isGroup;
+                                component.getModal().modal("hide");
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    if (data.isGroup) {
+                                        employeeMultiple.init();
+                                    }
+                                    else {
+                                        employeeChooseMethod.init();
+                                    }
+                                });
+                            });
+                        }
+                    },
+                    afterInit: function (options) {
+                        var dtd = $.Deferred();
+                        this.restore();
+                        this.getModal().find("#is-group").prop("disabled", true);
+                        dtd.resolve();
+                        return dtd.promise();
+                    }
+                }).result(undefined);
+
+                employeeChooseMethod = oc.employee.chooseMethod({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().modal("hide");
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    jobEnter.init();
+                                });
+                            });
+
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    component.persist();
+                                    var data = component.result();
+                                    saveData.chooseAddUserMethod = data.method;
+                                    if (component.result().method === "EnterEmployeeInfo") {
+                                        employeeEnter.init();
+                                    }
+                                    else if (component.result().method === "ChooseFromOrgChart") {
+                                        employeeChooseFromOrgChart.init();
+                                    }
+                                    else {
+                                        employeeChooseFromNoneJob.init();
+                                    }
+                                });
+                                component.getModal().modal("hide");
+                            });
+
+                        }
+                    }
+                }).result(undefined);
+
+                employeeEnter = oc.employee.enter({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                console.log("上一步");
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeChooseMethod.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                if (!component.getOptions().validate.valid()) {
+                                    return;
+                                }
+                                component.persist();
+                                var data = component.result();
+                                saveData.employeeName = data.employeeName;
+                                saveData.employeeNumber = data.employeeNumber;
+                                saveData.employeePassword = data.employeePassword;
+                                saveData.chooseEmployeeMethod = "EnterEmployeeInfo";
+
+                                orgChart.addDepartment(saveData).then(function () {
+                                    component.getModal().modal("hide");
+                                });
+                            });
+                        }
+                    }
+                }).result(undefined);
+
+                employeeChooseFromOrgChart = oc.employee.chooseFromOrgChart({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeChooseMethod.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                if ($("#componentEmployee>tbody>tr.success").length === 0) {
+                                    $.toast({
+                                        text: "至少选择一行", // Text that is to be shown in the toast
+                                        heading: '提示', // Optional heading to be shown on the toast
+                                        icon: 'error', // Type of toast icon
+                                        position: 'mid-center'
+                                    });
+                                    return;
+                                }
+
+                                component.persist();
+                                var data = component.result();
+                                saveData.employeeId = data.employeeId;
+                                saveData.chooseEmployeeMethod = "ChooseFromOrgChart";
+
+                                orgChart.addDepartment(saveData).then(function () {
+                                    component.getModal().modal("hide");
+                                });
+                            });
+                        }
+                    }
+                }).result(undefined);
+
+                employeeChooseFromNoneJob = oc.employee.chooseFromNoneJob({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeChooseMethod.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                if ($("#componentNoneJob>tbody>tr.success").length === 0) {
+                                    $.toast({
+                                        text: "至少选择一行", // Text that is to be shown in the toast
+                                        heading: '提示', // Optional heading to be shown on the toast
+                                        icon: 'error', // Type of toast icon
+                                        position: 'mid-center'
+                                    });
+                                    return;
+                                }
+                                component.persist();
+                                var data = component.result();
+                                saveData.employeeId = data.employeeId;
+                                saveData.chooseEmployeeMethod = "ChooseFromNoneJob";
+                                orgChart.addDepartment(saveData).then(function () {
+                                    component.getModal().modal("hide");
+                                });
+                            });
+                        }
+                    }
+                }).result(undefined);
+
+                departmentEnter.init();
+            });
+
+            //删除职务
+            $("#btnDeleteJob").click(function () {
+                $.confirm({
+                    title: '',
+                    content: '确认删除该职务？',
+                    buttons: {
+                        "确认": function () {
+                            orgChart.deleteJob();
+                        },
+                        "取消": function () {
+                        }
+                    }
+                })
+            });
+
+            //删除部门
+            $("#btnDeleteDepartment").click(function () {
+                $.confirm({
+                    title: '',
+                    content: '确认删除该部门？',
+                    buttons: {
+                        "确认": function () {
+                            orgChart.deleteDepartment();
+                        },
+                        "取消": function () {
+                        }
+                    }
+                })
+            });
+
+            //编辑部门信息
+            $("#orgChartNodeContent").on("click", "#btnEditDepartment", function () {
+                //获取当前选中节点
+                var treeObj = $.fn.zTree.getZTreeObj("orgChart");
+                var node = treeObj.getSelectedNodes()[0];
+                $.get("/orgchart/system/EditDepartment", { departmentId: node.userData.id }, function (result) {
+                    if (result.isSuccess === false) {
+                        $.toast({
+                            text: result.error, // Text that is to be shown in the toast
+                            heading: '提示', // Optional heading to be shown on the toast
+                            icon: 'error', // Type of toast icon
+                            position: 'mid-center'
+                        });
+                        return;
+                    }
+
+                    var departmentEnter = oc.department.enter({
+                        rightButtons: {
+                            text: "保存",
+                            init: function (component) {
+                                $(this).click(function () {
+                                    if (!component.getOptions().validate.valid()) {
+                                        return;
+                                    }
+                                    component.persist();
+                                    var data = component.result();
+                                    component.getModal().modal("hide");
+                                    component.getModal().on("hidden.bs.modal", function () {
+                                        $.post("/orgchart/system/EditDepartment", { departmentId: node.userData.id, departmentName: data.departmentName }, function (result) {
+                                            if (result.isSuccess === false) {
+                                                $.toast({
+                                                    text: result.error, // Text that is to be shown in the toast
+                                                    heading: '提示', // Optional heading to be shown on the toast
+                                                    icon: 'error', // Type of toast icon
+                                                    position: 'mid-center'
+                                                });
+                                                return;
+                                            }
+                                            orgChart.updateDepartmentInfo(node.userData.id);
+                                            node.userData.name = data.departmentName;
+                                            node.name = data.departmentName;
+                                            treeObj.updateNode(node);
+                                        });
+                                    });
+                                });
+                            }
+                        }
+                    }).result({ departmentName: result.data.departmentName }).init();
+                });
+            });
+
+            //编辑职务信息
+            $("#orgChartNodeContent").on("click", "#btnEditJob", function () {
+                //获取当前选中节点
+                var treeObj = $.fn.zTree.getZTreeObj("orgChart");
+                var node = treeObj.getSelectedNodes()[0];
+                $.get("/orgchart/system/EditJob", {jobId:node.userData.id}, function (result) {
+                    if (result.isSuccess===false) {
+                        $.toast({
+                            text: result.error, // Text that is to be shown in the toast
+                            heading: '提示', // Optional heading to be shown on the toast
+                            icon: 'error', // Type of toast icon
+                            position: 'mid-center'
+                        });
+                        return;
+                    }
+                    
+                    var jobEnter = oc.job.enter({
+                        rightButtons: {
+                            text: "保存",
+                            init: function (component) {
+                                $(this).click(function () {
+                                    if (!component.getOptions().validate.valid()) {
+                                        return;
+                                    }
+                                    component.persist();
+                                    var data = component.result();
+                                    component.getModal().modal("hide");
+                                    component.getModal().on("hidden.bs.modal", function () {
+                                        $.post("/orgchart/system/EditJob", { jobId: node.userData.id, jobName: data.jobName }, function (result) {
+                                            if (result.isSuccess === false) {
+                                                $.toast({
+                                                    text: result.error, // Text that is to be shown in the toast
+                                                    heading: '提示', // Optional heading to be shown on the toast
+                                                    icon: 'error', // Type of toast icon
+                                                    position: 'mid-center'
+                                                });
+                                                return;
+                                            }
+                                            orgChart.updateJobInfo(node.userData.id);
+                                            node.userData.name = data.jobName;
+                                            node.name = data.jobName;
+                                            treeObj.updateNode(node);
+                                        });
+                                    });
+                                });
+                            }
+                        },
+                        afterInit: function (options) {
+                            var dtd = $.Deferred();
+                            this.restore();
+                            this.getModal().find("#is-group").prop("disabled",true);
+                            dtd.resolve();
+                            return dtd.promise();
+                        }
+                    }).result({ jobName: result.data.jobName, isGroup: result.data.isGroup }).init();
+                });
+                
+            });
+
+            //添加职务人员
+            $("#orgChartNodeContent").on("click", "#btnAddEmployee,#btnReplaceEmployee", function () {
+                var employeeChooseMethod,
+                    employeeEnter,
+                    employeeChooseFromOrgChart,
+                    employeeChooseFromNoneJob;
+                var treeObj = $.fn.zTree.getZTreeObj("orgChart");
+                var node = treeObj.getSelectedNodes()[0];
+                var saveData = {
+                    jobId: $.fn.zTree.getZTreeObj("orgChart").getSelectedNodes()[0].userData.id
+                };
+
+               
+
+                employeeChooseMethod = oc.employee.chooseMethod({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().modal("hide");
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    jobEnter.init();
+                                });
+                            });
+
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    component.persist();
+                                    var data = component.result();
+                                    if (component.result().method === "EnterEmployeeInfo") {
+                                        employeeEnter.init();
+                                    }
+                                    else if (component.result().method === "ChooseFromOrgChart") {
+                                        employeeChooseFromOrgChart.init();
+                                    }
+                                    else {
+                                        employeeChooseFromNoneJob.init();
+                                    }
+                                });
+                                component.getModal().modal("hide");
+                            });
+
+                        }
+                    }
+                }).result(undefined);
+
+                employeeEnter = oc.employee.enter({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                console.log("上一步");
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeChooseMethod.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                if (!component.getOptions().validate.valid()) {
+                                    return;
+                                }
+                                component.persist();
+                                var data = component.result();
+                                saveData.chooseAddUserMethod = "EnterEmployeeInfo";
+                                saveData.employeeName = data.employeeName;
+                                saveData.employeeNumber = data.employeeNumber;
+                                saveData.employeePassword = data.employeePassword;
+                                orgChart.addJobEmployee(saveData).then(function () {
+                                    component.getModal().modal("hide");
+                                });
+                            });
+                        }
+                    }
+                }).result(undefined);
+
+                employeeChooseFromOrgChart = oc.employee.chooseFromOrgChart({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeChooseMethod.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                if ($("#componentEmployee>tbody>tr.success").length === 0) {
+                                    $.toast({
+                                        text: "至少选择一行", // Text that is to be shown in the toast
+                                        heading: '提示', // Optional heading to be shown on the toast
+                                        icon: 'error', // Type of toast icon
+                                        position: 'mid-center'
+                                    });
+                                    return;
+                                }
+
+                                component.persist();
+                                var data = component.result();
+                                saveData.employeeId = data.employeeId;
+                                saveData.chooseAddUserMethod = "ChooseFromOrgChart";
+
+                                orgChart.addJobEmployee(saveData).then(function () {
+                                    component.getModal().modal("hide");
+                                });
+                            });
+                        }
+                    }
+                }).result(undefined);
+
+                employeeChooseFromNoneJob = oc.employee.chooseFromNoneJob({
+                    leftButtons: {
+                        text: "上一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    employeeChooseMethod.init();
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    },
+                    rightButtons: {
+                        text: "下一步",
+                        init: function (component) {
+                            $(this).click(function () {
+                                if ($("#componentNoneJob>tbody>tr.success").length === 0) {
+                                    $.toast({
+                                        text: "至少选择一行", // Text that is to be shown in the toast
+                                        heading: '提示', // Optional heading to be shown on the toast
+                                        icon: 'error', // Type of toast icon
+                                        position: 'mid-center'
+                                    });
+                                    return;
+                                }
+                                component.persist();
+                                var data = component.result();
+                                saveData.employeeId = data.employeeId;
+                                saveData.chooseAddUserMethod = "ChooseFromNoneJob";
+                                orgChart.addJobEmployee(saveData).then(function () {
+                                    component.getModal().modal("hide");
+                                });
+                            });
+                        }
+                    }
+                }).result(undefined);
+
+                employeeChooseMethod.init();
+
+            });
+
+            //删除职务人员
+            $("#orgChartNodeContent").on("click", "#btnRemoveEmployee", function () {
+                $.confirm({
+                    title: '',
+                    content: '确认移除人员？',
+                    buttons: {
+                        "确认": function () {
+                            var data = [];
+                            var jobId = $.fn.zTree.getZTreeObj("orgChart").getSelectedNodes()[0].userData.id;
+                            $("#tbJobEmployees>tbody input[type='checkbox']:checked").each(function () {
+                                data.push($(this).closest("tr").data("id"));
+                            });
+                            if (data.length === 0) {
+                                return;
+                            }
+                            if (data.length === $("#tbJobEmployees>tbody input[type='checkbox']").length) {
+                                $.toast({
+                                    text: "至少要保留一个员工", // Text that is to be shown in the toast
+                                    heading: '提示', // Optional heading to be shown on the toast
+                                    icon: 'error', // Type of toast icon
+                                    position: 'mid-center'
+                                });
+                                return;
+                            }
+                            $.post("/orgchart/system/RemoveJobEmployee", { employees: JSON.stringify(data), jobId: jobId }, function (result) {
+                                if (result.isSuccess === false) {
+                                    $.toast({
+                                        text: result.error, // Text that is to be shown in the toast
+                                        heading: '提示', // Optional heading to be shown on the toast
+                                        icon: 'error', // Type of toast icon
+                                        position: 'mid-center'
+                                    });
+                                    return;
+                                }
+                                orgChart.updateJobInfo(jobId);
+                            });
+                        },
+                        "取消": function () {
+                        }
+                    }
+                })
+            });
+
+            //职务人员列表多选功能
+            $("#orgChartNodeContent").on("change", "#tbJobEmployees input[type='checkbox']", function () {
+                if ($(this).hasClass("check-all")) {
+                    if ($(this).is(":checked")) {
+                        $("#tbJobEmployees>tbody>tr").each(function () {
+                            $(this).children().first().find("input[type='checkbox']").prop("checked", true);
+                            $(this).addClass("success");
+                        });
+                    } else {
+                        $("#tbJobEmployees>tbody>tr").each(function () {
+                            $(this).children().first().find("input[type='checkbox']").prop("checked", false);
+                            $(this).removeClass("success");
+                        });
+                    }
+                }
+                else {
+                    $("#tbJobEmployees .check-all").prop("checked", false);
+                    if ($(this).is(":checked")) {
+                        $(this).closest("tr").addClass("success");
+                    }
+                    else {
+                        $(this).closest("tr").removeClass("success");
+                    }
+                }
+            });
+
+            //编辑人员信息,在人员详情中有编辑按钮，注册调用信息
+            var editEmployee = function (employeeId) {
+                $.blockUI();
+                $.get("/orgchart/system/EditEmployee", { employeeId: employeeId }, function (html) {
+                    $.unblockUI();
+                    var $modal = $(html);
+                    util.getHtmlBox().empty().append($modal);
+                    $modal.find("#btnSaveEditEmployee").click(function () {
+                        var $form = $modal.find("form");
+                        if ($modal.find("form").valid()) {
+                            $.blockUI();
+                            $.ajax({
+                                url: $form[0].action,
+                                type: $form[0].method,
+                                data: $form.serialize(),
+                                success: function (result) {
+                                    $modal.modal("hide");
+
+                                    //获取当前选中节点
+                                    var treeObj = $.fn.zTree.getZTreeObj("orgChart");
+                                    var node = treeObj.getSelectedNodes()[0];
+                                    if (node.userData.type === 1) {
+                                        orgChart.updateDepartmentInfo(node.userData.id);
+                                    }
+                                    else {
+                                        orgChart.updateJobInfo(node.userData.id);
+                                    }
+                                },
+                                error: function (result) {
+                                    $.toast({
+                                        text: result.error, // Text that is to be shown in the toast
+                                        heading: '提示', // Optional heading to be shown on the toast
+                                        icon: 'error', // Type of toast icon
+                                        position: 'mid-center'
+                                    });
+                                },
+                                complete: function () {
+                                    $.unblockUI();
+                                }
+                            });
+                        }
+                    });
+                    $.validator.unobtrusive.parse($modal.find("form"));
+                    $modal.modal("show");
+                });
+            };
+
+            //部门人员选中
+            $("#orgChartNodeContent").on("click", "#tbDepartmentDirectEmployee>tbody>tr,#tbDepartmentAllEmployee>tbody>tr", function (e) {
+                $(this).closest("tbody").children().removeClass("success");
+                $(this).addClass("success");
+            });
+
+            //查看人员详情
+            $("#orgChartNodeContent").on("click", "#btnViewEmployee_1,#btnViewEmployee", function (e) {
+                var $tr = $($(this).data("target")).find("tbody>tr.success");
+                if ($tr.length === 0) {
+                    $.toast({
+                        text: "请选择要查看的员工", // Text that is to be shown in the toast
+                        heading: '提示', // Optional heading to be shown on the toast
+                        icon: 'error', // Type of toast icon
+                        position: 'mid-center'
+                    });
+                    return;
+                }
+                $tr = $tr.first();
+                $.get("/orgchart/system/EmployeeDetail", { employeeId: $tr.data("id") }, function (html) {
+                    var $box = util.getHtmlBox();
+                    var $modal = $(html);
+                    $modal.find("#btnEditEmployee").click(function () {
+                        //注册编辑事件
+                        $modal.on("hidden.bs.modal", function () {
+                            editEmployee($tr.data("id"));
+                        });
+
+                        $modal.modal("hide");
+                    });
+                    
+                    $box.empty().append($modal);
+                    $modal.modal("show");
+                });
+            });
+
+            //授权线路
+            $("#orgChartNodeContent").on("click", ".authorized-xianlu", function (event) {
+                var $tr = $(this).closest(".box").find("tr.success");
+                if ($tr.length === 0) {
+                    $.toast({
+                        text: "请选择需要授权的员工", // Text that is to be shown in the toast
+                        heading: '提示', // Optional heading to be shown on the toast
+                        icon: 'error', // Type of toast icon
+                        position: 'mid-center'
+                    });
+                    event.preventDefault();
+                    return;
+                }
+                $(this).prop("href", "/participant/config/AuthorizeXianLu?employeeId=" + $tr.data("id"));
+                return;
+            });
+        });
+    </script>
+}

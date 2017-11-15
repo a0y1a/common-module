@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6A9E6444-8D14-4E3E-852E-11E262F1BCE6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KeKeSoftPlatform.WebExtension</RootNamespace>
+    <AssemblyName>KeKeSoftPlatform.WebExtension</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="JsonModelBinder.cs" />
+    <Compile Include="JsonNetResult.cs" />
+    <Compile Include="Pager.cs" />
+    <Compile Include="PFExtension.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Web\AlertEntity.cs" />
+    <Compile Include="Web\Bootstrap\BootstrapHtmlHelperExtension.cs" />
+    <Compile Include="Web\Bootstrap\BootstrapIcon.cs" />
+    <Compile Include="Web\Bootstrap\Button\ButtonDisplayType.cs" />
+    <Compile Include="Web\Bootstrap\Button\ButtonHtmlHelperExtension.cs" />
+    <Compile Include="Web\Bootstrap\Button\ButtonSize.cs" />
+    <Compile Include="Web\Bootstrap\Button\ButtonType.cs" />
+    <Compile Include="Web\Bootstrap\DropDownButtonGroup\DropDownButtonGroup.cs" />
+    <Compile Include="Web\Bootstrap\Form\BaseForm.cs" />
+    <Compile Include="Web\Bootstrap\Form\HtmlHelperExtension.cs" />
+    <Compile Include="Web\Bootstrap\PV.cs" />
+    <Compile Include="Web\Captcha.cs" />
+    <Compile Include="Web\FormsAuthentication.cs" />
+    <Compile Include="Web\Grid\Grid.cs" />
+    <Compile Include="Web\Grid\GridColumn.cs" />
+    <Compile Include="Web\HtmlAttribute\DisplayOnlyAttribute.cs" />
+    <Compile Include="Web\HtmlAttribute\EnumAttribute.cs" />
+    <Compile Include="Web\HtmlAttribute\IsRequiredAttribute.cs" />
+    <Compile Include="Web\HtmlAttribute\TooltipAttribute.cs" />
+    <Compile Include="Web\HtmlHelperExtension.cs" />
+    <Compile Include="Web\Http.cs" />
+    <Compile Include="Web\HttpPost\DefaultValidateReHttpRedirect.cs" />
+    <Compile Include="Web\HttpPost\HttpPostHtmlExtension.cs" />
+    <Compile Include="Web\HttpPost\IValidateReHttpRedirect.cs" />
+    <Compile Include="Web\HttpPost\PageTokenViewBase.cs" />
+    <Compile Include="Web\HttpPost\SessionPageTokenView.cs" />
+    <Compile Include="Web\HttpPost\ValidateReHttpPostAttribute.cs" />
+    <Compile Include="Web\ListControl\DropDownListAttribute.cs" />
+    <Compile Include="Web\ListControl\IListItemProvider.cs" />
+    <Compile Include="Web\ListControl\ListAttribute.cs" />
+    <Compile Include="Web\ListControl\ListItem.cs" />
+    <Compile Include="Web\ListControl\ListProviderBus.cs" />
+    <Compile Include="Web\Url\UrlBuilder.cs" />
+    <Compile Include="Web\VTreeNode.cs" />
+    <Compile Include="Web\ZTreeNode.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KeKeSoftPlatform.Common\KeKeSoftPlatform.Common.csproj">
+      <Project>{5b431a14-c2ba-4700-bf8c-5ab931f63c32}</Project>
+      <Name>KeKeSoftPlatform.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

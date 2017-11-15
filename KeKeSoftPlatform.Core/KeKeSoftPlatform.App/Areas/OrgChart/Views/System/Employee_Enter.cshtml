@@ -1,0 +1,45 @@
+﻿@{ 
+    var prevFix = string.Empty;
+    using (KeKeSoftPlatformDbContext db=new KeKeSoftPlatformDbContext())
+    {
+        prevFix = db.Account.Find(_User.Value.AccountId).Prefix;
+    }
+}
+<div class="modal fade " tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">添加职务——填写人员信息</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" action="#" method="post">
+                    <div class="form-group">
+                        <label for="job-name" class="col-sm-2 control-label">名称</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="employee-name" placeholder="名称">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-name" class="col-sm-2 control-label">编号</label>
+                        <div class="col-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon" >@prevFix</span>
+                                <input type="text" class="form-control" data-prev-fix="@prevFix" placeholder="编号" id="employee-number">
+                            </div>
+                            <span class="help-block" data-valmsg-for="employee-number"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="employee-password" class="col-sm-2 control-label">密码</label>
+                        <div class="col-sm-10">
+                            <input type="password" class="form-control" id="employee-password" placeholder="密码">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>

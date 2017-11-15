@@ -1,0 +1,57 @@
+﻿@model List<T_Employee>
+    @{ 
+        var modalId = UtilEncoder.Instance.NextToString();
+    }
+<div id="@modalId" class="modal fade " tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">添加职务——从无职务人员选择</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">无职务人员（双击选择人员）</h3>
+                    </div>
+                    <table class="table table-hover" id="@(modalId)componentMultipleNoneJobItems">
+                        <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>姓名</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr data-id="@item.Id">
+                                    <td>@item.Number</td>
+                                    <td>@item.Name</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">已选人员（双击选择人员）</h3>
+                    </div>
+                    <table class="table table-hover" id="@(modalId)componentMultipleNoneJob">
+                        <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>姓名</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                
+
+                
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,36 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>烟酒</title>
+    <meta name="description" content="烟酒" />
+    <meta name="keywords" content="烟酒" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link href="/Content/amazeui.min.css" rel="stylesheet" />
+    <link href="/Content/reset.css" rel="stylesheet" />
+    <link href="/Content/style.css" rel="stylesheet" />
+    <link href="/Content/common.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.min.js"></script>
+    <script src="/Scripts/alertPopShow.js"></script>
+    @*<script src="/Scripts/flexible.js"></script>*@
+    <script src="/Scripts/amazeui.min.js"></script>
+    <title>@ViewBag.Title</title>
+    @*@Styles.Render("~/Content/weui/css")*@
+    @Scripts.Render("~/bundles/modernizr")
+    @RenderSection("head", false)
+    <script src="http://cdn.bootcss.com/vue/2.3.0/vue.min.js"></script>
+    <script src="/Scripts/jquery-3.1.1.min.js"></script>
+    <style type="text/css">
+        [v-cloak]{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        @RenderBody()
+    </div>
+    @RenderSection("foot", required: false)
+</body>
+</html>

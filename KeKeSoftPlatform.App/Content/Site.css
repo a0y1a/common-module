@@ -1,0 +1,283 @@
+﻿body
+{
+    font-family: 'Microsoft YaHei','Microsoft YaHei UI' "Trebuchet MS", Verdana, Helvetica, Sans-Serif;
+}
+
+header,
+footer,
+nav,
+section {
+    display: block;
+}
+
+.cut {
+overflow:hidden;
+text-overflow:ellipsis;
+white-space: nowrap; 
+}
+
+/* Styles for basic forms
+-----------------------------------------------------------*/
+.box-split{border-top:1px solid #f4f4f4;}
+.pagination-tongji{line-height:1.5;padding:5px 10px;color:#666;}
+fieldset 
+{
+    border:1px solid #ddd;
+    padding:0 1.4em 1.4em 1.4em;
+    margin:0 0 1.5em 0;
+}
+
+legend 
+{
+    font-size:1.2em;
+    font-weight: bold;
+}
+
+textarea 
+{
+    min-height: 75px;
+}
+
+.editor-label 
+{
+    margin: 1em 0 0 0;
+}
+
+.editor-field 
+{
+    margin:0.5em 0 0 0;
+}
+
+
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error
+{
+    color: #ff0000;
+}
+
+.field-validation-valid
+{
+    display: none;
+}
+
+.input-validation-error
+{
+    border: 1px solid #ff0000;
+    background-color: #ffeeee;
+}
+
+.validation-summary-errors
+{
+    font-weight: bold;
+    color: #ff0000;
+}
+
+.validation-summary-valid
+{
+    display: none;
+}
+/*表格*/
+.grid-action-td{width:80px;white-space:nowrap;}
+.grid-action{white-space:nowrap;}
+.grid-action a{margin:0 5px;white-space:nowrap;}
+.grid-action button{margin:0 5px;white-space:nowrap;}
+
+/*响应式表格*/
+@media (max-width: 2767px) {
+    .table-responsive {
+        width: 100%;
+        margin-bottom: 15px;
+        overflow-x: auto;
+        overflow-y: auto;
+        border: 1px solid #dddddd;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+        -webkit-overflow-scrolling: touch;
+    }
+
+        .table-responsive > .table {
+            margin-bottom: 0;
+        }
+
+            .table-responsive > .table > thead > tr > th,
+            .table-responsive > .table > tbody > tr > th,
+            .table-responsive > .table > tfoot > tr > th,
+            .table-responsive > .table > thead > tr > td,
+            .table-responsive > .table > tbody > tr > td,
+            .table-responsive > .table > tfoot > tr > td {
+                white-space: nowrap;
+            }
+}
+
+/*页面顶部操作栏*/
+#page-operating {
+    border-bottom: solid 1px #ccc;
+    padding: 10px 60px 10px 20px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px;
+    background-color: #fff;
+    position: fixed;
+    height: 50px;
+    top: 0;
+    left: 0px;
+    width: 100%;
+    z-index: 100;
+}
+
+.input-required {color:red;display:inline-block;margin-left:5px;}
+
+
+/*查询*/
+#form_search div.form-group {
+/*margin-bottom: 5px;*/
+margin-left: 10px;
+}
+#form_search .btn-search {
+margin-left: 20px;
+}
+
+/*加载等待动画*/
+#sys_shadow{position:fixed;_position:absolute;top:0;left:0;right:0;bottom:0;z-index:99;}
+#sys_loading{position:fixed;_position:absolute;top:50%;left:50%;width:124px;height:124px;overflow:hidden;background:url(/images/loading.gif) no-repeat;z-index:100; margin:-62px 0 0 -62px;} 
+
+/*input[type='text'],input[type='password'],textarea{
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.428571429;
+    color: #555;
+    vertical-align: middle;
+    background-image: none;
+    border: 1px solid #CCC;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}*/
+
+/*select{
+    display: inline-block !important;
+    height: 34px;
+    width:auto !important;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.428571429;
+    color: #555;
+    vertical-align: middle;
+    background-image: none;
+    border: 1px solid #CCC;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}*/
+
+/*产品列表显示图片*/
+table .product-image{width:80px;height:80px;}
+
+#form_search .form-group{margin-bottom:10px;}
+
+#tbBeiXuanProduct .selected {
+    background-color:#ee5151 !important;
+    font-weight:bold;
+    color:#fff;
+}
+
+
+/*tag*/
+.bootstrap-tagsinput {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+            display: inline-block;
+            padding: 4px 6px;
+            color: #555;
+            vertical-align: middle;
+            border-radius: 4px;
+            max-width: 100%;
+            line-height: 22px;
+            cursor: text;
+        }
+
+            .bootstrap-tagsinput input {
+                border: none;
+                box-shadow: none;
+                outline: none;
+                background-color: transparent;
+                padding: 0 6px;
+                margin: 0;
+                width: auto;
+                max-width: inherit;
+            }
+
+            .bootstrap-tagsinput.form-control input::-moz-placeholder {
+                color: #777;
+                opacity: 1;
+            }
+
+            .bootstrap-tagsinput.form-control input:-ms-input-placeholder {
+                color: #777;
+            }
+
+            .bootstrap-tagsinput.form-control input::-webkit-input-placeholder {
+                color: #777;
+            }
+
+            .bootstrap-tagsinput input:focus {
+                border: none;
+                box-shadow: none;
+            }
+
+            .bootstrap-tagsinput .tag {
+                margin-right: 2px;
+                color: white;
+            }
+
+                .bootstrap-tagsinput .tag [data-role="remove"] {
+                    margin-left: 8px;
+                    cursor: pointer;
+                }
+
+                    .bootstrap-tagsinput .tag [data-role="remove"]:after {
+                        content: "x";
+                        padding: 0px 2px;
+                    }
+
+                    .bootstrap-tagsinput .tag [data-role="remove"]:hover {
+                        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+                    }
+
+                        .bootstrap-tagsinput .tag [data-role="remove"]:hover:active {
+                            box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+                        }
+
+
+.box-tools form {display:inline-block;}
+
+/*select2在Bootstrap的modal中默认被遮盖，现在强制显示在最前*/
+    .select2-drop {
+        z-index: 10050 !important;
+    }
+ 
+    .select2-search-choice-close {
+        margin-top: 0 !important;
+        right: 2px !important;
+        min-height: 10px;
+    }
+ 
+        .select2-search-choice-close:before {
+            color: black !important;
+        }
+    /*防止select2不会自动失去焦点*/
+    .select2-container {
+        z-index: 16000 !important;
+    }
+ 
+    .select2-drop-mask {
+        z-index: 15990 !important;
+    }
+ 
+    .select2-drop-active {
+        z-index: 15995 !important;
+    }

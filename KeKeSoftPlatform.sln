@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeKeSoftPlatform.App", "KeKeSoftPlatform.App\KeKeSoftPlatform.App.csproj", "{25F03830-0736-4813-92D4-2C4B59AAACE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeKeSoftPlatform.Common", "KeKeSoftPlatform.Common\KeKeSoftPlatform.Common.csproj", "{5B431A14-C2BA-4700-BF8C-5AB931F63C32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeKeSoftPlatform.WebExtension", "KeKeSoftPlatform.WebExtension\KeKeSoftPlatform.WebExtension.csproj", "{6A9E6444-8D14-4E3E-852E-11E262F1BCE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeKeSoftPlatform.Db", "KeKeSoftPlatform.Db\KeKeSoftPlatform.Db.csproj", "{E8108EBA-D99F-4B05-8B7A-508BEAA8C9D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeKeSoftPlatform.Core", "KeKeSoftPlatform.Core\KeKeSoftPlatform.Core.csproj", "{FEECE8E0-A765-42B1-84F7-6FEDABCB28B9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{25F03830-0736-4813-92D4-2C4B59AAACE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25F03830-0736-4813-92D4-2C4B59AAACE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25F03830-0736-4813-92D4-2C4B59AAACE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25F03830-0736-4813-92D4-2C4B59AAACE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B431A14-C2BA-4700-BF8C-5AB931F63C32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B431A14-C2BA-4700-BF8C-5AB931F63C32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B431A14-C2BA-4700-BF8C-5AB931F63C32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B431A14-C2BA-4700-BF8C-5AB931F63C32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A9E6444-8D14-4E3E-852E-11E262F1BCE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A9E6444-8D14-4E3E-852E-11E262F1BCE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A9E6444-8D14-4E3E-852E-11E262F1BCE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A9E6444-8D14-4E3E-852E-11E262F1BCE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8108EBA-D99F-4B05-8B7A-508BEAA8C9D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8108EBA-D99F-4B05-8B7A-508BEAA8C9D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8108EBA-D99F-4B05-8B7A-508BEAA8C9D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8108EBA-D99F-4B05-8B7A-508BEAA8C9D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEECE8E0-A765-42B1-84F7-6FEDABCB28B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEECE8E0-A765-42B1-84F7-6FEDABCB28B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEECE8E0-A765-42B1-84F7-6FEDABCB28B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEECE8E0-A765-42B1-84F7-6FEDABCB28B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

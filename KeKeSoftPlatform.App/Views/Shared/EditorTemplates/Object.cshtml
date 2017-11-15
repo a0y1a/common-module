@@ -1,0 +1,98 @@
+﻿@model object
+@if (ViewData.TemplateInfo.TemplateDepth > 1)
+{
+    @ViewData.ModelMetadata.SimpleDisplayText;
+}
+else
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    foreach (var prop in ViewData.ModelMetadata.Properties.Where(pm => pm.ShowForEdit && !ViewData.TemplateInfo.Visited(pm)))
+    {
+        if (prop.HideSurroundingHtml)
+        {
+            @Html.Editor(prop.PropertyName)
+        }
+        else
+        {
+
+            //只读属性
+            var displayOnlyAttribute = prop.ContainerType.GetProperty(prop.PropertyName).GetCustomAttributes(typeof(DisplayOnlyAttribute), false);
+            if (displayOnlyAttribute.Any())
+            {
+                <div class="form-group">
+                    <label class="col-md-2 control-label text-right">@Html.Label(prop.PropertyName)：</label>
+                    <div class="col-md-10">
+                        <p class="form-control-static" id="@("__{0}".FormatString(prop.PropertyName))">@Html.Display(prop.PropertyName)</p>
+                    </div>
+
+                    @if ((displayOnlyAttribute.First() as DisplayOnlyAttribute).HideValue)
+                    {
+                        @Html.Hidden(prop.PropertyName)
+                    }
+                </div>
+                continue;
+            }
+            <div class="form-group">
+                <label class="col-md-2 control-label text-right">
+                    @{
+                        var isRequired = prop.ContainerType.GetProperty(prop.PropertyName).GetCustomAttributes(typeof(IsRequiredAttribute), false);
+                        if (isRequired != null)
+                        {
+                            if ((isRequired.Any() && (isRequired.First() as IsRequiredAttribute).IsRequired))
+                            {
+                                <span class="input-required hidden-xs">*</span>
+                            }
+                        }
+                        else
+                        {
+                            if (prop.IsRequired)
+                            {
+                                <span class="input-required  hidden-xs">*</span>
+                            }
+                        }
+                    }
+                    @Html.Label(prop.PropertyName)：
+
+                    @{
+                        if (isRequired != null)
+                        {
+                            if ((isRequired.Any() && (isRequired.First() as IsRequiredAttribute).IsRequired))
+                            {
+                                <span class="input-required hidden-sm  hidden-md hidden-lg">*</span>
+                            }
+                        }
+                        else
+                        {
+                            if (prop.IsRequired)
+                            {
+                                <span class="input-required  hidden-sm hidden-md hidden-lg" >*</span>
+                            }
+                        }
+                    }
+                </label>
+                <div class="col-md-10">
+                    @Html.Editor(prop.PropertyName)
+                    @Html.ValidationMessage(prop.PropertyName)
+                    @{
+                        var htmlTooltip = "";
+                        var tooltipAttribute = prop.ContainerType.GetProperty(prop.PropertyName).GetCustomAttributes(typeof(TooltipAttribute), false);
+                        if (tooltipAttribute.Any())
+                        {
+                            htmlTooltip = (tooltipAttribute.First() as TooltipAttribute).Text;
+                        }
+                    }
+                    @if (string.IsNullOrWhiteSpace(htmlTooltip) == false)
+                    {
+                        <div id="@("_htmlExtension_" + prop.PropertyName)" class="form-control-static">
+
+                            @htmlTooltip
+                        </div>
+                    }
+                    <div id="@("{0}{1}".FormatString(PV.EXTENSION_ID,prop.PropertyName))"></div>
+                </div>
+            </div>
+                                }
+                            }
+                        }
+

@@ -1,0 +1,359 @@
+﻿@model List<T_Group>
+@{
+    ViewBag.Title = "工作组管理";
+}
+
+@section head{
+    <link href="@Url.Content("~/Content/zTree/zTreeStyle.css")" rel="stylesheet" />
+}
+
+<div class="row">
+    <div class="col-sm-4">
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info btn-sm" id="btnAdd"><i class="fa fa-plus"></i> 添加</button>
+                            <button type="button" class="btn btn-info btn-sm" id="btnEdit"><i class="fa fa-pencil"></i> 编辑</button>
+                            <button type="button" class="btn btn-info btn-sm" id="btnDelete"><i class="fa fa-trash-o"></i> 删除</button>
+                            <!-- Single button -->
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-gear"></i>
+                                    权限 <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a id="btnAuthorize" href="#">操作权限</a></li>
+                                    <li><a id="btnGridColumnAuthorize" href="#">字段权限</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="box-split" style="margin-top:5px;"></div>
+                    <div class="col-sm-12">
+                        <ul class="list-group" id="groupItems">
+                            @foreach (var item in Model)
+                            {
+                                <li data-id="@item.Id" class="list-group-item" title="@item.Description">@item.Name</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8" id="detail">
+        
+    </div>
+</div>
+
+
+@section foot{
+<script src="@Url.Content("~/Scripts/zTree/jquery.ztree.all.min.js")" type="text/javascript"></script>
+<script type="text/javascript" src="/Scripts/OrgChart/oc.js"></script>
+    <script type="text/javascript">
+        //记载详情
+        function loadDetail(id) {
+            $.blockUI();
+            $.get("/orgchart/system/GroupDetail", { groupId: id }, function (html) {
+                $("#detail").empty().append(html);
+                $.unblockUI();
+            });
+        }
+
+        $(function () {
+            //添加工作组
+            $("#btnAdd").click(function () {
+                util.form().url("/orgchart/system/creategroup")
+                    .title("添加工作组")
+                    .onSuccess(function (data) {
+                        window.location.href = window.location.href;
+                    })
+                    .open();
+            });
+
+            //编辑工作组
+            $("#btnEdit").click(function () {
+                var $li = $("#groupItems li.active");
+                if ($li.length == 0) {
+                    $.toast({
+                        text: "请选择要编辑的工作组", // Text that is to be shown in the toast
+                        heading: '提示', // Optional heading to be shown on the toast
+                        icon: 'error', // Type of toast icon
+                        position: 'mid-center'
+                    });
+                    return;
+                }
+
+                util.form().url("/orgchart/system/EditGroup")
+                    .title("编辑工作组")
+                    .params({ groupId: $li.data("id") })
+                    .onSuccess(function (data) {
+                        window.location.href = window.location.href;
+                    })
+                    .open();
+            });
+
+            //删除工作组
+            $("#btnDelete").click(function () {
+                var $li = $("#groupItems li.active");
+                if ($li.length == 0) {
+                    $.toast({
+                        text: "请选择要删除的工作组", // Text that is to be shown in the toast
+                        heading: '提示', // Optional heading to be shown on the toast
+                        icon: 'error', // Type of toast icon
+                        position: 'mid-center'
+                    });
+                    return;
+                }
+
+                $.confirm({
+                    title: '',
+                    content: '确认要删除？',
+                    buttons: {
+                        "确认": function () {
+                            $.blockUI();
+                            $.post("/orgchart/system/deletegroup", { groupId: $li.data("id") }, function () {
+                                $li.remove();
+                                $("#detail").empty();
+                                $.unblockUI();
+                            });
+                        },
+                        "取消": function () {
+                        }
+                    }
+                })
+            });
+
+            //选中工作组
+            $("#groupItems").on("click", "li", function () {
+                $("#groupItems li").removeClass("active");
+                $(this).addClass("active");
+
+                loadDetail($(this).data("id"));
+            });
+
+            //添加人员到工作组
+            $("#detail").on("click", "#btnAddEmployee", function () {
+                oc.employee.chooseMultipleFromOrgChart({
+                    rightButtons: {
+                        text: "确定",
+                        title:"选择人员",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.persist();
+                                var data = component.persist().result();
+                                console.log(data);
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    $.blockUI();
+                                    $.post("/orgchart/system/AddEmployeeToGroup", { groupId: $("#groupItems li.active").data("id"), employeeIds: JSON.stringify($(data).map(function () { return this.employeeId; }).toArray()) }, function () {
+                                        $.unblockUI();
+                                        loadDetail($("#groupItems li.active").data("id"));
+                                    });
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    }
+                }).result($("#tbGroupMember>tbody>tr[data-member-type='@GroupMemeberType.Employee']").map(function () {
+                    return {
+                        employeeId: $(this).data("member-id"),
+                        employeeName: $(this).data("name"),
+                        employeeNumber:$(this).data("number")
+                    }
+                }).toArray()).init();
+            });
+
+
+            //添加职务到工作组
+            $("#detail").on("click", "#btnAddJob", function () {
+                oc.job.chooseMultiple({
+                    rightButtons: {
+                        text: "确定",
+                        title: "选择职务",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.persist();
+                                var data = component.persist().result();
+                                console.log(data);
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    $.blockUI();
+                                    $.post("/orgchart/system/AddJobToGroup", { groupId: $("#groupItems li.active").data("id"), jobIds: JSON.stringify($(data).map(function () { return this.jobId; }).toArray()) }, function () {
+                                        $.unblockUI();
+                                        loadDetail($("#groupItems li.active").data("id"));
+                                    });
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    }
+                }).result($("#tbGroupMember>tbody>tr[data-member-type='@GroupMemeberType.Job']").map(function () {
+                    return {
+                        jobId: $(this).data("member-id"),
+                        jobName: $(this).data("name")
+                    }
+                }).toArray()).init();
+            });
+
+            //添加部门到工作组
+            $("#detail").on("click", "#btnAddDepartment", function () {
+                oc.department.chooseMultiple({
+                    rightButtons: {
+                        text: "确定",
+                        title: "选择部门",
+                        init: function (component) {
+                            $(this).click(function () {
+                                component.persist();
+                                var data = component.persist().result();
+                                component.getModal().on("hidden.bs.modal", function () {
+                                    $.blockUI();
+                                    $.post("/orgchart/system/AddDepartmentToGroup", { groupId: $("#groupItems li.active").data("id"), departmentIds: JSON.stringify($(data).map(function () { return this.departmentId; }).toArray()) }, function () {
+                                        $.unblockUI();
+                                        loadDetail($("#groupItems li.active").data("id"));
+                                    });
+                                });
+                                component.getModal().modal("hide");
+                            });
+                        }
+                    }
+                }).result($("#tbGroupMember>tbody>tr[data-member-type='@GroupMemeberType.Department']").map(function () {
+                    return {
+                        departmentId: $(this).data("member-id"),
+                        departmentFullName: $(this).data("name")
+                    }
+                }).toArray()).init();
+            });
+
+            //全选
+            $("#detail").on("change", "#tbGroupMember input[type='checkbox'].check-all", function () {
+                $("#tbGroupMember input[type='checkbox']:not(.check-all)").prop("checked", $(this).is(":checked"));
+            });
+
+            //移除工作组成员
+            $("#detail").on("click", "#btnRemove", function () {
+                $.confirm({
+                    title: '',
+                    content: '确认移除？',
+                    buttons: {
+                        "确认": function () {
+                            var groupMemberIds = $("#tbGroupMember>tbody>tr").filter(function () {
+                                return $(this).find("input:checkbox").is(":checked");
+                            }).map(function () {
+                                return $(this).data("id");
+                            }).toArray();
+
+                            $.blockUI();
+                            $.post("/orgchart/system/RemoveGroupMember", { groupId: $("#groupItems li.active").data("id"), groupMemberIds: JSON.stringify(groupMemberIds) }, function () {
+                                $.unblockUI();
+                                loadDetail($("#groupItems li.active").data("id"));
+                            });
+                        },
+                        "取消": function () {
+                        }
+                    }
+                })
+            });
+
+            //加载权限
+            $("#btnAuthorize").click(function () {
+                var $li = $("#groupItems li.active");
+                if ($li.length == 0) {
+                    $.toast({
+                        text: "请选择工作组", // Text that is to be shown in the toast
+                        heading: '提示', // Optional heading to be shown on the toast
+                        icon: 'error', // Type of toast icon
+                        position: 'mid-center'
+                    });
+                    return;
+                }
+                $.blockUI();
+                $.get("/system/TableAuthorize", { groupId: $li.data("id") }, function (html) {
+                    $("#detail").empty().append(html);
+                    $.unblockUI();
+                });
+            });
+
+            //权限-全选
+            $("#detail").on("change", "#tableAuthorize .check-all", function () {
+                $(this).closest("table").find(":checkbox:not(.check-all)").prop("checked", $(this).is(":checked"));
+            });
+
+            //权限-保存
+            $("#detail").on("click", "#tableAuthorize .btn", function () {
+                var data = $("#detail").find(":checked:not(.check-all)").map(function () { return $(this).closest("tr").data("id"); }).toArray();
+
+                $.blockUI();
+                $.post("/system/TableAuthorize", { groupId: $("#groupItems li.active").data("id"), data: JSON.stringify(data) }, function () {
+                    $.unblockUI();
+                    $.toast({
+                        text: "保存成功", // Text that is to be shown in the toast
+                        heading: '提示', // Optional heading to be shown on the toast
+                        icon: 'info', // Type of toast icon
+                        position: 'mid-center'
+                    });
+                });
+            });
+
+
+            //加载字段权限
+            $("#btnGridColumnAuthorize").click(function () {
+                var $li = $("#groupItems li.active");
+                if ($li.length == 0) {
+                    $.toast({
+                        text: "请选择工作组", // Text that is to be shown in the toast
+                        heading: '提示', // Optional heading to be shown on the toast
+                        icon: 'error', // Type of toast icon
+                        position: 'mid-center'
+                    });
+                    return;
+                }
+                $.blockUI();
+                $.get("/system/GridColumnAuthorize", { groupId: $li.data("id") }, function (html) {
+                    $("#detail").empty().append(html);
+                    $.unblockUI();
+                });
+            });
+
+            //字段权限-全选
+            $("#detail").on("change", "#gridColumnAuthorize .check-all", function () {
+                $(this).closest(".box").find(":checkbox:not(.check-all)").prop("checked", $(this).is(":checked"));
+            });
+
+            //字段权限-保存
+            $("#detail").on("click", "#gridColumnAuthorize .btn-save", function () {
+                var data = $("#detail").find(":checked:not(.check-all)").map(function () { return $(this).closest(".checkbox").data("id"); }).toArray();
+
+                $.blockUI();
+                $.post("/system/gridColumnAuthorize", { groupId: $("#groupItems li.active").data("id"), data: JSON.stringify(data) }, function () {
+                    $.unblockUI();
+                    $.toast({
+                        text: "保存成功", // Text that is to be shown in the toast
+                        heading: '提示', // Optional heading to be shown on the toast
+                        icon: 'info', // Type of toast icon
+                        position: 'mid-center'
+                    });
+                });
+            });
+            
+            //字段权限-查询
+            $("#detail").on("click", "#gridColumnAuthorize .btn-search", function () {
+                if (!$("#txtGridName").val()) {
+                    $(".el-grid").removeClass("hide");
+                    return;
+                }
+                var gridName = $("#txtGridName").val();
+                $("#gridColumnAuthorize .el-grid").each(function () {
+                    if ($(this).find(".box-title").text().indexOf(gridName) > -1) {
+                        $(this).removeClass("hide");
+                    }
+                    else {
+                        $(this).addClass("hide");
+                    }
+                });
+            });
+        });
+    </script>
+    }

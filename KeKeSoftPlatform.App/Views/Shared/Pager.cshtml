@@ -1,0 +1,63 @@
+﻿@model Pager
+
+@if (Model.ItemCount == 0)
+{
+    <div class="pull-right hidden-xs pagination-tongji">无数据</div>
+}
+else
+{
+    <div class="pull-left hidden-xs pagination-tongji">共 @Model.ItemCount 条记录 当前第 @Model.PageNum/@Model.PageCount 页 每页 @Model.PageSize 条</div>
+    <ul class="pagination pagination-sm no-margin pull-right">
+        @if (Model.PageNum == 1)
+        {
+            <li class="disabled"><a href="#">«</a></li>
+            <li class="disabled"><a href="#">&lsaquo;</a></li>
+        }
+        else
+        {
+            <li><a href="@Model.GeneratePagerItem(Html, 1)">«</a></li>
+            <li><a href="@Model.GeneratePagerItem(Html, Model.PageNum - 1)">&lsaquo;</a></li>
+        }
+
+        @{
+            var min = 0;
+            var max = 0;
+
+            for (int n = 1; n <= 5; n++)
+            {
+                if ((Model.PageNum - n) % 4 == 0)
+                {
+                    min = Model.PageNum - (n - 1);
+                    max = Model.PageNum + (5 - n);
+                    break;
+                }
+            }
+        }
+        @for (int i = min; i <= Math.Min(max, Model.PageCount); i++)
+        {
+            if (i == Model.PageNum)
+            {
+                <li class="active"><a href="#">@i</a></li>
+            }
+            else
+            {
+                <li><a href="@Model.GeneratePagerItem(Html,i)">@i</a></li>
+            }
+        }
+
+
+
+        @if (Model.PageNum == Model.PageCount || Model.PageCount == 0)
+        {
+            <li class="disabled"><a href="#">&rsaquo;</a></li>
+            <li class="disabled"><a href="#">»</a></li>
+        }
+        else
+        {
+            <li><a href="@Model.GeneratePagerItem(Html,Model.PageNum+1)">&rsaquo;</a></li>
+            <li><a href="@Model.GeneratePagerItem(Html,Model.PageCount)">»</a></li>
+        }
+
+    </ul>
+
+            }
