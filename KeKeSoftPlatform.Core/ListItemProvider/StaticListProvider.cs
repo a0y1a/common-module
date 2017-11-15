@@ -27,8 +27,6 @@ namespace KeKeSoftPlatform.Core
         public StaticListProvider()
         {
             this.listCollection = new Dictionary<string, IEnumerable<ListItem>>();
-
-            this.listCollection.Add("BalanceType", BalanceType.Public.ToSelectDataSource().Select(m => new ListItem { Text = m.Text, Value = m.Value }));
         }
 
 

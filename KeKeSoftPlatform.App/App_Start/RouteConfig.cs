@@ -16,7 +16,7 @@ namespace KeKeSoftPlatform.App
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "System", action = "Login", id = UrlParameter.Optional },
+                defaults: new { controller = "System", action = "Modules", id = UrlParameter.Optional },
                 namespaces: new string[] { "KeKeSoftPlatform.App.Controllers" }
             );
         }

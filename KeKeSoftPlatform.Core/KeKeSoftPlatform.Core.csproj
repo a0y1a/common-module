@@ -134,7 +134,6 @@
     <Compile Include="SchedulerJob\SchedulerJobThread.cs" />
     <Compile Include="Spell.cs" />
     <Compile Include="UrlConverter.cs" />
-    <Compile Include="ViewModel\User.cs" />
     <Compile Include="ViewModel\System.cs" />
     <Compile Include="WeiXin\Common\BoolConverter.cs" />
     <Compile Include="WeiXin\Common\EnumConverter.cs" />

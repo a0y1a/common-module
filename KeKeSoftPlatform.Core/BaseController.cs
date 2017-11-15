@@ -15,7 +15,7 @@ using KeKeSoftPlatform.WebExtension;
 
 namespace KeKeSoftPlatform.Core
 {
-    [Right(Identity.Admin)]
+    [Right(AllowAnonymous = true)]
     public class BaseController : Controller
     {
         #region 文件下载

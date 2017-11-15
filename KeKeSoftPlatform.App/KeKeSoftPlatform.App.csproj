@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -170,7 +171,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\weixin\Controllers\GatewayController.cs" />
     <Compile Include="Areas\weixin\weixinAreaRegistration.cs" />
-    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\SystemController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -1768,10 +1768,6 @@
     <Content Include="Views\Shared\Pager.cshtml" />
     <Content Include="Views\Shared\Tab.cshtml" />
     <Content Include="Views\Shared\_html5shiv.cshtml" />
-    <Content Include="Views\Shared\_LayoutForPrint.cshtml" />
-    <Content Include="Views\System\ChangePwd.cshtml" />
-    <Content Include="Views\System\Config.cshtml" />
-    <Content Include="Views\System\Login.cshtml" />
     <Content Include="Scripts\ueditor\net\config.json" />
     <Content Include="Scripts\ueditor\net\controller.ashx" />
     <Content Include="Scripts\ueditor\third-party\jquery-1.10.2.min.map" />
@@ -1780,24 +1776,8 @@
     <Content Include="Scripts\ueditor\third-party\video-js\font\vjs.woff" />
     <Content Include="Scripts\plupload\readme.md" />
     <Content Include="Scripts\plupload\js\Moxie.xap" />
-    <Content Include="Views\Shared\_Layout_AdminLTE.cshtml" />
-    <Content Include="Views\Shared\_Layout_Base.cshtml" />
-    <Content Include="Views\System\Login_Original.cshtml" />
-    <Content Include="Views\System\MenuCategory.cshtml" />
-    <Content Include="Views\System\MenuCategoryDetail.cshtml" />
-    <Content Include="Views\System\Users.cshtml" />
-    <Content Include="Views\System\DaiKous.cshtml" />
-    <Content Include="Views\System\CreateUser.cshtml" />
-    <Content Include="Views\System\EditUser.cshtml" />
-    <Content Include="Views\User\ChangePwd.cshtml" />
-    <Content Include="Views\User\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\_LayoutUser.cshtml" />
-    <Content Include="Views\User\Login.cshtml" />
-    <Content Include="Views\User\DaiKous.cshtml" />
-    <Content Include="Views\System\UserDetail.cshtml" />
-    <Content Include="Views\User\ImportDaiKous.cshtml" />
-    <Content Include="Views\System\DaiKouStatistics.cshtml" />
-    <Content Include="Views\System\DaiKouStatisticsDetail.cshtml" />
+    <Content Include="Views\System\Modules.cshtml" />
+    <Content Include="Views\System\CreateModule.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -108,49 +108,14 @@ namespace KeKeSoftPlatform.Db
             }
         }
 
-        #region 权限
-        public DbSet<T_MenuCategory> MenuCategory { get; set; }
-        public DbSet<T_Menu> Menu { get; set; }
-        public DbSet<T_MenuAction> MenuAction { get; set; }
-        
-        #endregion
-
-        public DbSet<T_User> User { get; set; }
-        public DbSet<T_DaiKou> DaiKou { get; set; }
-        public DbSet<T_UserImportRecord> UserImportRecord { get; set; }
+        public DbSet<T_Module> Module { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<T_User>()
-                        .HasMany(m => m.DaiKous)
-                        .WithRequired(m => m.User)
-                        .HasForeignKey(m => m.UserId);
-
-            modelBuilder.Entity<T_User>()
-                        .HasMany(m => m.UserImportRecords)
-                        .WithRequired(m => m.User)
-                        .HasForeignKey(m => m.UserId);
-
-            #region 权限
-
-            modelBuilder.Entity<T_MenuCategory>()
-                       .HasMany(m => m.Menus)
-                       .WithOptional(m => m.MenuCategory)
-                       .HasForeignKey(m => m.MenuCategoryId)
-                       .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<T_MenuCategory>()
-                        .HasMany(m => m.Children)
-                        .WithOptional(m => m.Parent)
-                        .HasForeignKey(m => m.ParentId)
-                        .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<T_Menu>()
-                       .HasMany(m => m.MenuActions)
-                       .WithRequired(m => m.Menu)
-                       .HasForeignKey(m => m.MenuId);
-
-            #endregion
+            modelBuilder.Entity<T_Module>()
+                        .HasMany(m => m.Modules)
+                        .WithOptional(m => m.ParentModule)
+                        .HasForeignKey(m => m.ParentId);
 
             base.OnModelCreating(modelBuilder);
         }

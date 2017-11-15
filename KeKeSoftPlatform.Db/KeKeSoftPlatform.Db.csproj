@@ -48,12 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Db\KeKeSoftPlatformDbContext.cs" />
-    <Compile Include="Db\Models\Right\T_Menu.cs" />
-    <Compile Include="Db\Models\Right\T_MenuAction.cs" />
-    <Compile Include="Db\Models\Right\T_MenuCategory.cs" />
-    <Compile Include="Db\Models\System\T_DaiKou.cs" />
-    <Compile Include="Db\Models\System\T_User.cs" />
-    <Compile Include="Db\Models\System\T_UserImportRecord.cs" />
+    <Compile Include="Db\Models\System\T_Module.cs" />
     <Compile Include="GroupMemberUpdater.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

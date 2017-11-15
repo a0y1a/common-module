@@ -1,94 +1,64 @@
-﻿@model Pager<T_User>
+﻿@model List<T_Module>
 @{
-    ViewBag.Title = "商户列表";
+    ViewBag.Title = "模块";
 }
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="box box-default">
-            <div class="box-header with-border">
-                <h3 class="box-title">@ViewBag.Title</h3>
-                <div class="box-tools">
-                    <a href="/system/CreateUser" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> 添加</a>
-                    <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#searchModal"><i class="fa fa-search"></i> 查询</button>
-                </div>
-            </div>
-            <div class="box-body">
-                @(Grid.Create<T_User>().SetDataSource(Model.Data)
-                    .Column(m => m.Number).Name("商户号").Value(@<a href="/system/DaiKous?userNumber=@item.Number" style="color:#4072C7;">@item.Number</a>).End()
-                    .Column(m => m.Name).Name("商户名").End()
-                    .Column(m => m.AdminNumber).Name("操作员账号").End()
-                    .Column(m => m.ContactName).Name("联系人").End()
-                    .Column(m => m.ContactPhone).Name("联系电话").End()
-                    .Column(m => m.BalanceType).Name("结算类型").Value(typeof(BalanceType)).End()
-                     .ActionColumn(@<a href="javascript:void(0)" onclick="detail('@item.Id')">详情</a>,
-                     m => DropDownButtonGroup.Create()
-                    .Size(ButtonSize.ExtraSmall)
-                    .Element(Html.ActionLink("编辑", "EditUser", new { userId = m.Id, returnUrl = Html.GenerateUrl() }))
-                    .Element(Html.ActionLink("删除", "DeleteUser", new { userId = m.Id, returnUrl = Html.GenerateUrl() }, new { @class = "action-delete" }))
-                    .Element(Html.ActionLink("重置密码", "ResetUserPwd", new { userId = m.Id, returnUrl = Html.GenerateUrl() }, new { @class = "action-reset" }))
-                    .Render()).End()
-                    .Render())
-            </div>
-            <div class="box-footer clearfix">
-                @Html.Page(Model)
-            </div>
-        </div>
-    </div>
-</div>
+@section head{
+    <style type="text/css">
+        #btnAdd {
+            margin:-5px 10px 5px 0;
+        }
+    </style>
+}
 
-<div class="modal fade" id="searchModal" tabindex="-1">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">综合查询</h4>
+@Html.Tab(new ListItem[] { new ListItem { Text = "模块", Selected = true, Value = "/System/Modules" }, new ListItem { Text = "具体项", Value = "/Business/Items" } })
+
+<div class="row">
+    <button id="btnAdd" onclick="create()" type="button" class="btn btn-success btn-sm pull-right"><span class="glyphicon glyphicon-plus"></span> Create</button>
+    <div class="col-md-12">
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <div class="panel-group" role="tablist">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="@($"collapse{Model[i].Id}")">
+                        <h4 class="panel-title">
+                            <a class="" role="button" data-toggle="collapse" href="#@Model[i].Id" aria-expanded="true" aria-controls="@Model[i].Id">
+                                @($"{Model[i].Sequence}. {Model[i].Name}")
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="@Model[i].Id" class="panel-collapse collapse in" role="tabpanel" aria-expanded="true" style="">
+                        <ul class="list-group">
+                            @foreach (var item in Model[i].Modules.OrderBy(m => m.Sequence))
+                            {
+                                <li class="list-group-item"><a href="@item.Url">@item.Name</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <form method="get" action="/system/users">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="adminNumber">操作员账号</label>
-                        @Html.TextBox("adminNumber", Request.QueryString["adminNumber"], new { @class = "form-control" })
-                    </div>
-                    <div class="form-group">
-                        <label for="contactPhone">联系电话</label>
-                        @Html.TextBox("contactPhone", Request.QueryString["contactPhone"], new { @class = "form-control" })
-                    </div>
-                    <div class="form-group">
-                        <label for="levelId">结算类型</label>
-                        @Html.DropDownList("banlanceType", (new List<SelectListItem>() { new SelectListItem { Text = "==全部==", Value = "" } }).Concat(BalanceType.Public.ToSelectDataSource()), new { @class = "form-control" })
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="submit" class="btn btn-primary">查询</button>
-                </div>
-            </form>
-        </div>
+        }
     </div>
 </div>
 
 @section foot{
     <script type="text/javascript">
-        function detail(id) {
-            util.form().url("/system/UserDetail")
-                .title("商户详情")
-                .params({ userId: id })
-                .onLoad(function ($modal) {
-                    $modal.find(".modal-dialog").addClass("modal-lg");
-                    $modal.find(".modal-footer").addClass("hide");
+        function create() {
+            util.form().url("/System/CreateModule")
+                .title("创建模块")
+                .onSuccess(function () {
+                    window.location.reload();
+                })
+                .onFail(function (error) {
+                    $.toast({
+                        text: error, // Text that is to be shown in the toast
+                        heading: '提示', // Optional heading to be shown on the toast
+                        icon: 'error', // Type of toast icon
+                        position: 'top-center'
+                    });
+                    this.close();
                 })
                 .open();
         }
-
-        $(function () {
-            $(".action-delete").confirm({
-                content: "删除该商户，会删除该商户下的代扣数据，确认删除？"
-            });
-
-            $(".action-reset").confirm({
-                content: "确认重置密码？"
-            });
-        });
     </script>
 }

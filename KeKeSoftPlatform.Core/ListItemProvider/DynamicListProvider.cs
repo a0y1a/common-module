@@ -29,13 +29,11 @@ namespace KeKeSoftPlatform.Core
         {
             dynamicListCollection = new Dictionary<string, Func<IEnumerable<ListItem>>>();
 
-            dynamicListCollection.Add("SelectUser", () =>
+            this.dynamicListCollection.Add("ParentModule", () =>
             {
                 using(KeKeSoftPlatformDbContext db = new KeKeSoftPlatformDbContext())
                 {
-                    List<ListItem> userList = new List<ListItem>() { new ListItem { Text = "==全部==", Value = "" } };
-                    userList.AddRange(db.User.ToList().Select(m => new ListItem { Text = m.Number + " —— " + m.Name, Value = m.Number.ToString() }));
-                    return userList;
+                    return db.Module.Where(m => m.ParentId.HasValue == false).OrderBy(m => m.Sequence).Select(m => new ListItem { Text = m.Name, Value = m.Id.ToString() }).ToList();
                 }
             });
         }
